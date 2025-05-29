@@ -63,6 +63,7 @@
     <!-- sl-mainpanel -->
     <!-- ########## END: MAIN PANEL ########## -->
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('/backend/lib/jquery/jquery.js') }}"></script>
     <script src="{{ asset('/backend/lib/popper.js/popper.js') }}"></script>
     <script src="{{ asset('/backend/lib/bootstrap/bootstrap.js') }}"></script>
@@ -80,6 +81,9 @@
     <script src="{{ asset('/backend/js/starlight.js') }}"></script>
     <script src="{{ asset('/backend/js/ResizeSensor.js') }}"></script>
     <script src="{{ asset('/backend/js/dashboard.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    @yield('js')
 </body>
 
 </html>

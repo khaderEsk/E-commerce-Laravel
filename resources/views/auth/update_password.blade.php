@@ -1,7 +1,7 @@
 @extends('auth.master')
 
 
-@section('title', 'forget password')
+@section('title', 'update password')
 @section('content')
     <div class="d-flex align-items-center justify-content-center bg-sl-primary ht-100v">
 
@@ -11,10 +11,15 @@
             <br><br>
 
             <div class="form-group">
-                <input type="text" class="form-control" id="email" placeholder="Enter your email">
+                <input type="password" class="form-control" placeholder="Enter your password" id="password">
             </div><!-- form-group -->
+
+            <div class="form-group">
+                <input type="password" class="form-control" placeholder="Enter your password Again" id="rePassword">
+            </div>
+            <input type="hidden" id="userId" value="{{ $user->id }}">
             <br>
-            <button type="submit" class="btn btn-info btn-block loginBtn">Send</button>
+            <button type="submit" class="btn btn-info btn-block updatedPasswordBtn">update Password</button>
         </div><!-- login-wrapper -->
     </div><!-- d-flex -->
 @endsection
@@ -22,24 +27,41 @@
 @section('js')
     <script>
         $(document).ready(function() {
-            $('.loginBtn').click( function(e) {
+            $('.updatedPasswordBtn').click(function(e) {
                 e.preventDefault();
-                let email = $('#email').val();
-                if (email == '') {
+                let password = $('#password').val();
+                let rePassword = $('#rePassword').val();
+                let userId = $('#userId').val();
+                if (password == '') {
                     Swal.fire({
                         title: 'Error!',
-                        text: 'Please enter email',
+                        text: 'Please enter password for new Account',
+                        icon: 'error',
+                        confirmButtonText: 'Ok!'
+                    })
+                } else if (rePassword == '') {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please enter password Again',
+                        icon: 'error',
+                        confirmButtonText: 'Ok!'
+                    })
+                } else if (rePassword != password) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Sorry password not match',
                         icon: 'error',
                         confirmButtonText: 'Ok!'
                     })
                 } else {
-                    console.log(email);
                     $.ajax({
                         method: 'post',
                         // url: '{{ route('login') }}',
-                        url: "/user/reset-password",
+                        url: "/user/updated-password",
                         data: {
-                            email: email
+                            password: password,
+                            userId: userId
+
                         },
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -52,13 +74,7 @@
                                     icon: 'success',
                                     confirmButtonText: 'Ok!'
                                 })
-                            } else {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Wrong email',
-                                    icon: 'error',
-                                    confirmButtonText: 'Ok!'
-                                })
+                                window.location.href = '/login'
                             }
                         }
                     })

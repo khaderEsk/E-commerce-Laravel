@@ -37,8 +37,14 @@
                         </div>
                         <div class="top_bar_user">
                             <div class="user_icon"><img src="images/user.svg" alt=""></div>
-                            <div><a href="{{ route('register') }}">Register</a></div>
-                            <div><a href="{{ route('login') }}">Sign in</a></div>
+                            @if (Auth::check())
+                                <div><a href="{{ route('home') }}">{{ Auth::user()->name }}</a></div>
+                                <div><a href="{{ route('user.logout') }}">Sign Out</a></div>
+                            @else
+                                <div><a href="{{ route('register') }}">Register</a></div>
+                                <div><a href="{{ route('login') }}">Sign in</a></div>
+                            @endif
+
                         </div>
                     </div>
                 </div>
