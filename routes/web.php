@@ -31,7 +31,11 @@ Route::controller(BackendController::class)->group(function () {
         Route::get('/dashboard', 'index')->name('dashboard');
         Route::get('/admin-logout', 'admin_logout')->name('admin.logout');
         Route::get('/add-category', 'add_category')->name('add.category');
-        Route::post('/add/category', 'add_category_post')->name('add.categories');
+        Route::post('/add-category/store', 'add_category_store')->name('add.category.store');
+        Route::get('/category', 'category')->name('category');
+        Route::get('/category-edit/{id}', 'category_edit')->name('category.edit');
+        Route::put('/category/updated', 'category_updated')->name('category.updated');
+        Route::post('/category/delete', 'category_delete')->name('category.delete');
     });
 });
 

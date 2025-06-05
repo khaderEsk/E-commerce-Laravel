@@ -1,13 +1,13 @@
 @extends('backend.master')
 
-@section('title', 'add category')
+@section('title', 'edit category')
 
 @section('content')
 
     <div class="sl-mainpanel">
         <nav class="breadcrumb sl-breadcrumb">
             <a class="breadcrumb-item" href="{{ route('dashboard') }}">dashboard</a>
-            <span class="breadcrumb-item active">Add Category</span>
+            <span class="breadcrumb-item active">Edit Category</span>
         </nav>
 
         <div class="sl-pagebody">
@@ -19,17 +19,19 @@
                             <label class="col-sm-4 form-control-label">Category Name: <span
                                     class="tx-danger">*</span></label>
                             <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                                <input type="text" class="form-control" id="name" placeholder="Enter Category Name">
+                                <input type="text" class="form-control" id="name" placeholder="Enter Category Name"
+                                    value="{{ $category->name }}">
                             </div>
                         </div><!-- row -->
                         <div class="row mg-t-20">
                             <label class="col-sm-4 form-control-label">Category Order: <span
                                     class="tx-danger">*</span></label>
                             <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                                <input type="number" class="form-control" id="order" placeholder="Enter Category Orde">
+                                <input type="number" class="form-control" id="order" placeholder="Enter Category Orde"
+                                    value="{{ $category->order }}">
                             </div>
                         </div>
-
+                        <input type="hidden" id="id" value="{{ $category->id }}">
                         <div class="form-layout-footer mg-t-30">
                             <button type="button" class="btn btn-info mg-r-5" id="saveCate">Save</button>
                         </div><!-- form-layout-footer -->
@@ -43,6 +45,8 @@
 @endsection
 
 
+
+
 @section('js')
     <script>
         $(document).ready(function() {
@@ -50,6 +54,7 @@
                 e.preventDefault();
                 let name = $('#name').val();
                 let order = $('#order').val();
+                let id = $('#id').val();
                 if (name == '') {
                     Swal.fire({
                         title: 'Error!',
@@ -66,29 +71,23 @@
                     })
                 } else {
                     $.ajax({
-                        method: 'post',
+                        method: 'put',
                         // url: '{{ route('login') }}',
-                        url: "/add-category/store",
+                        url: "/category/updated",
                         data: {
                             order: order,
                             name: name,
+                            id: id
 
                         },
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         success: function(response) {
-                            if (response.data == 0) {
-                                Swal.fire({
-                                    title: 'Error!',
-                                    text: 'Category Already Exists',
-                                    icon: 'error',
-                                    confirmButtonText: 'Ok!'
-                                })
-                            } else {
+                            if (response.data == 1) {
                                 Swal.fire({
                                     title: 'Success!',
-                                    text: 'Category Added Successfully',
+                                    text: 'Category Updated Successfully',
                                     icon: 'success',
                                     confirmButtonText: 'Ok!'
                                 }).then(result => {
@@ -105,4 +104,3 @@
         });
     </script>
 @endsection
-
