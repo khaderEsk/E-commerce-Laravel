@@ -36,6 +36,9 @@ Route::controller(BackendController::class)->group(function () {
         Route::get('/category-edit/{id}', 'category_edit')->name('category.edit');
         Route::put('/category/updated', 'category_updated')->name('category.updated');
         Route::post('/category/delete', 'category_delete')->name('category.delete');
+
+        Route::get('/add-product', 'add_product')->name('add.product');
+        Route::post('/product/store', 'add_product_store');
     });
 });
 

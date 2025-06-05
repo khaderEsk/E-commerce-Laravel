@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -62,6 +63,56 @@ class BackendController extends Controller
         $category = Category::where('id', $request->id)->delete();
         return response()->json(['data' => 1]);
     }
+
+
+    public function add_product()
+    {
+        $category = Category::all();
+        return view('backend.Products.add', compact('category'));
+    }
+
+    public function add_product_store(Request $request)
+    {
+        if (!$request->hasFile('img')) {
+            return response()->json(['error' => 'No image uploaded'], 400);
+        }
+
+        $img = $request->file('img');
+
+        if (!$img->isValid()) {
+            return response()->json(['error' => 'Invalid image uploaded'], 400);
+        }
+
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+        $ext = strtolower($img->getClientOriginalExtension());
+
+        if (!in_array($ext, $allowedExtensions)) {
+            return response()->json(['error' => 'Unsupported image format'], 400);
+        }
+
+        $gen = hexdec(uniqid());
+        $imgName = $gen . '.' . $ext;
+        $location = public_path('products');
+
+        if (!file_exists($location)) {
+            mkdir($location, 0775, true);
+        }
+
+        $img->move($location, $imgName);
+
+        $product = Product::create([
+            'category' => strip_tags($request->category),
+            'name' => strip_tags($request->productName),
+            'oldPrice' => strip_tags($request->oldPrice),
+            'newPrice' => strip_tags($request->newPrice),
+            'img' => $imgName,
+            'created_by' => Carbon::now(),
+        ]);
+
+        return response()->json(['data' => 1]);
+    }
+
+
 
     public function admin_logout()
     {
