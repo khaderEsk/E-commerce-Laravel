@@ -29,35 +29,25 @@
         </ul>
         <a href="{{ route('add.product') }}" class="sl-menu-link">
             <div class="sl-menu-item">
-                <i class="menu-item-icon icon ion-ios-gear-outline tx-24"></i>
+                <i class="icon ion-ios-cart-outline tx-24"></i>
                 <span class="menu-item-label">Products</span>
                 <i class="menu-item-arrow fa fa-angle-down"></i>
             </div><!-- menu-item -->
         </a><!-- sl-menu-link -->
         <ul class="sl-menu-sub nav flex-column">
             <li class="nav-item"><a href="{{ route('add.product') }}" class="nav-link">Add</a></li>
-            <li class="nav-item"><a href="form-layouts.html" class="nav-link">View</a></li>
+            <li class="nav-item"><a href="{{ route('view.product') }}" class="nav-link">View</a></li>
         </ul>
         <a href="#" class="sl-menu-link">
             <div class="sl-menu-item">
-                <i class="menu-item-icon icon ion-ios-filing-outline tx-24"></i>
-                <span class="menu-item-label">UI Elements</span>
+                <i class="menu-item-icon icon ion-ios-star-outline tx-24"></i>
+                <span class="menu-item-label">Featured Products </span>
                 <i class="menu-item-arrow fa fa-angle-down"></i>
             </div><!-- menu-item -->
         </a><!-- sl-menu-link -->
         <ul class="sl-menu-sub nav flex-column">
-            <li class="nav-item"><a href="accordion.html" class="nav-link">Accordion</a></li>
-            <li class="nav-item"><a href="alerts.html" class="nav-link">Alerts</a></li>
-            <li class="nav-item"><a href="buttons.html" class="nav-link">Buttons</a></li>
-            <li class="nav-item"><a href="cards.html" class="nav-link">Cards</a></li>
-            <li class="nav-item"><a href="icons.html" class="nav-link">Icons</a></li>
-            <li class="nav-item"><a href="modal.html" class="nav-link">Modal</a></li>
-            <li class="nav-item"><a href="navigation.html" class="nav-link">Navigation</a></li>
-            <li class="nav-item"><a href="pagination.html" class="nav-link">Pagination</a></li>
-            <li class="nav-item"><a href="popups.html" class="nav-link">Tooltip &amp; Popover</a></li>
-            <li class="nav-item"><a href="progress.html" class="nav-link">Progress</a></li>
-            <li class="nav-item"><a href="spinners.html" class="nav-link">Spinners</a></li>
-            <li class="nav-item"><a href="typography.html" class="nav-link">Typography</a></li>
+            <li class="nav-item"><a href="{{ route('Featured.Products.add') }}" class="nav-link">Add</a></li>
+            <li class="nav-item"><a href="{{ route('Featured.Products.view') }}" class="nav-link">View</a></li>
         </ul>
         <a href="#" class="sl-menu-link">
             <div class="sl-menu-item">

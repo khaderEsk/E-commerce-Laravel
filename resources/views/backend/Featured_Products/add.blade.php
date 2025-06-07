@@ -1,8 +1,9 @@
 @extends('backend.master')
 
-@section('title', 'add Products')
+@section('title', 'Add Featured Products')
 
 @section('content')
+
 
     <div class="sl-mainpanel">
         <nav class="breadcrumb sl-breadcrumb">
@@ -140,7 +141,7 @@
                     $.ajax({
                         method: 'post',
                         // url: '{{ route('login') }}',
-                        url: "/product/store",
+                        url: "/product/featured/store",
                         contentType: false,
                         processData: false,
                         data: formData,

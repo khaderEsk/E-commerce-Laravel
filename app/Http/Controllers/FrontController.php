@@ -3,10 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ForgetPassword;
+use App\Models\Category;
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Mail\Mailables\Address;
-use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -16,14 +16,26 @@ class FrontController extends Controller
 {
     public function home()
     {
+        $featuredProducts = Product::where('isFeatured', 1)->get();
+        $first = Product::first();
+        $firstCat = Category::where('id', $first->category)->first();
+        $weekDeals = Product::latest()->paginate(3);
+        $categories = Category::all();
+        return view('Front.index', compact('featuredProducts', 'first', 'firstCat', 'weekDeals', 'categories'));
+    }
 
-        // $user = new  User;
-        // $user->name = "Admin";
-        // $user->email = "admin@gmail.com";
-        // $user->password = Hash::make('12341234');
-        // $user->save();
-        // $user->assignRole('admin');
-        return view('Front.index');
+    public function products_by_category($id)
+    {
+        $products = Product::where('category', $id)->latest()->paginate(10);
+        $categories = Category::all();
+        $selectCate = Category::findOrFail($id);
+        return view('Front.products_by_category', compact('products', 'categories', 'selectCate'));
+    }
+    public function product_view($id)
+    {
+        $product = Product::findOrFail($id);
+        $category = Category::where('id', $product->category)->first();
+        return view('Front.products.view', compact('product', 'category'));
     }
 
     public function login_user(Request $request)

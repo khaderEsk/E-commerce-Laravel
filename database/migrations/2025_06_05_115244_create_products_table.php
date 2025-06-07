@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('oldPrice');
             $table->string('newPrice');
             $table->string('img');
+            $table->longText('description');
+            $table->tinyInteger('isFeatured')->default(0);
             $table->timestamps();
         });
     }

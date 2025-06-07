@@ -13,6 +13,8 @@ class Product extends Model
         'oldPrice',
         'newPrice',
         'img',
+        'description',
+        'isFeatured'
 
     ];
 }

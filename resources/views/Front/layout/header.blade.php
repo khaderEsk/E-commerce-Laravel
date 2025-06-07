@@ -142,8 +142,8 @@
 
                             <ul class="cat_menu">
                                 @foreach ($categories as $category)
-                                    <li><a href="#">{{ $category->name }} <i
-                                                class="fas fa-chevron-right ml-auto"></i></a></li>
+                                    <li><a href="{{ route('products.by.category', ['id' => $category->id]) }}">{{ $category->name }}
+                                            <i class="fas fa-chevron-right ml-auto"></i></a></li>
                                 @endforeach
                             </ul>
                         </div>
@@ -152,7 +152,7 @@
 
                         <div class="main_nav_menu ml-auto">
                             <ul class="standard_dropdown main_nav_dropdown">
-                                <li><a href="#">Home<i class="fas fa-chevron-down"></i></a></li>
+                                <li><a href="{{ route('home') }}">Home<i class="fas fa-chevron-down"></i></a></li>
                                 <li class="hassubs">
                                     <a href="#">Super Deals<i class="fas fa-chevron-down"></i></a>
                                     <ul>

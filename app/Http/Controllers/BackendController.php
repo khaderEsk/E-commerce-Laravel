@@ -34,10 +34,39 @@ class BackendController extends Controller
         if (Category::where('name', $request->name)->first()) {
             return response()->json(['data' => 0]);
         }
+
+        if (!$request->hasFile('img')) {
+            return response()->json(['error' => 'No image uploaded'], 400);
+        }
+
+        $img = $request->file('img');
+
+        if (!$img->isValid()) {
+            return response()->json(['error' => 'Invalid image uploaded'], 400);
+        }
+
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+        $ext = strtolower($img->getClientOriginalExtension());
+
+        if (!in_array($ext, $allowedExtensions)) {
+            return response()->json(['error' => 'Unsupported image format'], 400);
+        }
+
+        $gen = hexdec(uniqid());
+        $imgName = $gen . '.' . $ext;
+        $location = public_path('products');
+
+        if (!file_exists($location)) {
+            mkdir($location, 0775, true);
+        }
+
+        $img->move($location, $imgName);
+
         $category = Category::create([
             'name' => $request->name,
             'order' => $request->order,
             'created_by' => Carbon::now(),
+            'img' => 'categories/' . $imgName,
         ]);
         return response()->json(['data' => 1]);
     }
@@ -51,10 +80,33 @@ class BackendController extends Controller
 
     public function category_updated(Request $request)
     {
-        $category = Category::where('id', $request->id)->update([
-            'name' => strip_tags($request->name),
-            'order' => strip_tags($request->order),
-        ]);
+        $category = Category::where('id', $request->id)->first();
+
+        if ($request->hasFile('img')) {
+            if ($category->img && file_exists(public_path($category->img))) {
+                unlink(public_path($category->img));
+            }
+
+            $img = $request->file('img');
+
+            $gen = hexdec(uniqid());
+            $ex = strtolower($img->getClientOriginalExtension());
+            $name = $gen . '.' . $ex;
+
+            $location = 'categories/';
+            $destination = public_path($location);
+
+            $img->move($destination, $name);
+
+            $category->img = $location . $name;
+        }
+
+        $category->name = strip_tags($request->name);
+        $category->order = strip_tags($request->order);
+        $category->save();
+        if ($category) {
+            return response()->json(['data' => 1]);
+        }
         return response()->json(['data' => 1]);
     }
 
@@ -105,15 +157,125 @@ class BackendController extends Controller
             'name' => strip_tags($request->productName),
             'oldPrice' => strip_tags($request->oldPrice),
             'newPrice' => strip_tags($request->newPrice),
-            'img' => $imgName,
+            'description' => strip_tags($request->description),
+            'img' => 'products/' . $imgName,
+            'isFeatured' => 0,
             'created_by' => Carbon::now(),
         ]);
 
         return response()->json(['data' => 1]);
     }
 
+    public function product_view()
+    {
+        $products = Product::latest()->paginate(10);
+        return view('backend.Products.index', compact('products'));
+    }
 
+    public function product_edit($id)
+    {
+        $product = Product::findOrFail($id);
+        // $category = Category::all();
+        return view('backend.Products.edit', compact('product'));
+    }
 
+    public function product_updated(Request $request)
+    {
+
+        $product = Product::where('id', $request->id)->first();
+
+        if ($request->hasFile('img')) {
+            if ($product->img && file_exists(public_path($product->img))) {
+                unlink(public_path($product->img));
+            }
+
+            $img = $request->file('img');
+
+            $gen = hexdec(uniqid());
+            $ex = strtolower($img->getClientOriginalExtension());
+            $name = $gen . '.' . $ex;
+
+            $location = 'products/';
+            $destination = public_path($location);
+
+            $img->move($destination, $name);
+
+            $product->img = $location . $name;
+        }
+
+        $product->category = $request->category;
+        $product->name = strip_tags($request->productName);
+        $product->oldPrice = strip_tags($request->oldPrice);
+        $product->newPrice = strip_tags($request->newPrice);
+        $product->description = strip_tags($request->description);
+        $product->save();
+        if ($product) {
+            return response()->json(['data' => 1]);
+        }
+    }
+
+    public function product_delete($id)
+    {
+        $product = Product::where('id', $id)->first();
+        unlink(public_path($product->img));
+        $product->delete();
+        return response()->json(['data' => 1]);
+    }
+
+    public function Featured_Products_add()
+    {
+        $category = Category::all();
+        return view('backend.Featured_Products.add', compact('category'));
+    }
+
+    public function product_featured_store(Request $request)
+    {
+        if (!$request->hasFile('img')) {
+            return response()->json(['error' => 'No image uploaded'], 400);
+        }
+
+        $img = $request->file('img');
+
+        if (!$img->isValid()) {
+            return response()->json(['error' => 'Invalid image uploaded'], 400);
+        }
+
+        $allowedExtensions = ['jpg', 'jpeg', 'png'];
+        $ext = strtolower($img->getClientOriginalExtension());
+
+        if (!in_array($ext, $allowedExtensions)) {
+            return response()->json(['error' => 'Unsupported image format'], 400);
+        }
+
+        $gen = hexdec(uniqid());
+        $imgName = $gen . '.' . $ext;
+        $location = public_path('products');
+
+        if (!file_exists($location)) {
+            mkdir($location, 0775, true);
+        }
+
+        $img->move($location, $imgName);
+
+        $product = Product::create([
+            'category' => strip_tags($request->category),
+            'name' => strip_tags($request->productName),
+            'oldPrice' => strip_tags($request->oldPrice),
+            'newPrice' => strip_tags($request->newPrice),
+            'description' => strip_tags($request->description),
+            'img' => 'products/' . $imgName,
+            'isFeatured' => 1,
+            'created_by' => Carbon::now(),
+        ]);
+
+        return response()->json(['data' => 1]);
+    }
+
+    public function Featured_Products_view()
+    {
+        $products = Product::where('isFeatured', 1)->latest()->paginate(10);
+        return view('backend.Featured_Products.index', compact('products'));
+    }
     public function admin_logout()
     {
         Auth::logout();

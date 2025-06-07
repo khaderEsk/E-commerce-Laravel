@@ -26,10 +26,18 @@
                             <label class="col-sm-4 form-control-label">Category Order: <span
                                     class="tx-danger">*</span></label>
                             <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                                <input type="number" class="form-control" id="order" placeholder="Enter Category Orde">
+                                <input type="number" class="form-control" id="order"
+                                    placeholder="Enter Category Order">
                             </div>
                         </div>
+                        <div class="row mg-t-20">
+                            <label class="col-sm-4 form-control-label">Category Image: <span
+                                    class="tx-danger">*</span></label>
+                            <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                                <input type="file" class="form-control" id="img">
 
+                            </div>
+                        </div>
                         <div class="form-layout-footer mg-t-30">
                             <button type="button" class="btn btn-info mg-r-5" id="saveCate">Save</button>
                         </div><!-- form-layout-footer -->
@@ -50,6 +58,11 @@
                 e.preventDefault();
                 let name = $('#name').val();
                 let order = $('#order').val();
+                let img = $('#img').prop('files')[0];
+                let formData = new FormData();
+                formData.append('img', img);
+                formData.append('order', order);
+                formData.append('name', name);
                 if (name == '') {
                     Swal.fire({
                         title: 'Error!',
@@ -64,16 +77,21 @@
                         icon: 'error',
                         confirmButtonText: 'Ok!'
                     })
+                } else if (!img) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Upload product image',
+                        icon: 'error',
+                        confirmButtonText: 'Ok!'
+                    })
                 } else {
                     $.ajax({
                         method: 'post',
                         // url: '{{ route('login') }}',
                         url: "/add-category/store",
-                        data: {
-                            order: order,
-                            name: name,
-
-                        },
+                        contentType: false,
+                        processData: false,
+                        data: formData,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
@@ -105,4 +123,3 @@
         });
     </script>
 @endsection
-

@@ -7,6 +7,7 @@
     <div class="sl-mainpanel">
         <nav class="breadcrumb sl-breadcrumb">
             <a class="breadcrumb-item" href="{{ route('dashboard') }}">dashboard</a>
+            <a class="breadcrumb-item" href="{{ route('category') }}">Categories</a>
             <span class="breadcrumb-item active">Edit Category</span>
         </nav>
 
@@ -29,6 +30,15 @@
                             <div class="col-sm-8 mg-t-10 mg-sm-t-0">
                                 <input type="number" class="form-control" id="order" placeholder="Enter Category Orde"
                                     value="{{ $category->order }}">
+                            </div>
+                        </div>
+                        <div class="row mg-t-20">
+                            <label class="col-sm-4 form-control-label">Image: <span class="tx-danger">*</span></label>
+                            <div class="col-sm-8 mg-t-10 mg-sm-t-0">
+                                <a href="{{ asset($category->img) }}" target="_blank">
+                                    <img src="{{ asset($category->img) }}" alt="image" width="100">
+                                </a>
+                                <input type="file" class="form-control" id="img" value="{{ $category->img }}">
                             </div>
                         </div>
                         <input type="hidden" id="id" value="{{ $category->id }}">
@@ -55,6 +65,15 @@
                 let name = $('#name').val();
                 let order = $('#order').val();
                 let id = $('#id').val();
+                let formData = new FormData();
+
+                if ($('#img').prop('files')[0] != null) {
+                    let img = $('#img').prop('files')[0];
+                    formData.append('img', img);
+                }
+                formData.append('id', id);
+                formData.append('name', name);
+                formData.append('order', order);
                 if (name == '') {
                     Swal.fire({
                         title: 'Error!',
@@ -69,17 +88,21 @@
                         icon: 'error',
                         confirmButtonText: 'Ok!'
                     })
+                } else if (!img) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please Upload product image',
+                        icon: 'error',
+                        confirmButtonText: 'Ok!'
+                    })
                 } else {
                     $.ajax({
-                        method: 'put',
+                        method: 'post',
                         // url: '{{ route('login') }}',
                         url: "/category/updated",
-                        data: {
-                            order: order,
-                            name: name,
-                            id: id
-
-                        },
+                        contentType: false,
+                        processData: false,
+                        data: formData,
                         headers: {
                             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
