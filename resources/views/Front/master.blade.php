@@ -2,8 +2,9 @@
 <html lang="en">
 
 <head>
-    <title>OneTech</title>
+    <title>OneTech - @yield('title')</title>
     <meta charset="utf-8">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="description" content="OneTech shop project">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -67,6 +68,7 @@
         </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="{{ asset('/js/jquery-3.3.1.min.js') }}"></script>
     <script src="{{ asset('/styles/bootstrap4/popper.js') }}"></script>
     <script src="{{ asset('/styles/bootstrap4/bootstrap.min.js') }}"></script>
@@ -85,7 +87,7 @@
     <script src="{{ asset('/plugins/parallax-js-master/parallax.min.js') }}"></script>
     <script src="{{ asset('/js/shop_custom.js') }}"></script>
     <script src="{{ asset('/js/product_custom.js') }}"></script>
-
+    @yield('js')
 </body>
 
 </html>

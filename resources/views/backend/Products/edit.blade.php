@@ -55,7 +55,7 @@
                         <div class="row mg-t-20">
                             <label class="col-sm-4 form-control-label">new Price: <span class="tx-danger">*</span></label>
                             <div class="col-sm-8 mg-t-10 mg-sm-t-0">
-                                <textarea class="form-control" id="description" > {{ $product->description }}</textarea>
+                                <textarea class="form-control" id="description"> {{ $product->description }}</textarea>
                             </div>
                         </div>
                         <div class="row mg-t-20">
@@ -122,13 +122,6 @@
                         confirmButtonText: 'Ok!'
                     })
 
-                } else if (oldPrice == '') {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Enter old price product',
-                        icon: 'error',
-                        confirmButtonText: 'Ok!'
-                    })
                 } else if (newPrice == '') {
                     Swal.fire({
                         title: 'Error!',

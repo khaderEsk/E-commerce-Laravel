@@ -5,12 +5,17 @@ namespace App\Http\Controllers;
 use App\Mail\ForgetPassword;
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\ProductView;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
+
+use function Pest\Laravel\json;
 
 class FrontController extends Controller
 {
@@ -21,7 +26,13 @@ class FrontController extends Controller
         $firstCat = Category::where('id', $first->category)->first();
         $weekDeals = Product::latest()->paginate(3);
         $categories = Category::all();
-        return view('Front.index', compact('featuredProducts', 'first', 'firstCat', 'weekDeals', 'categories'));
+        $hotSeal = Product::where('oldPrice', "!=", null)->get();
+        $productView = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('product_views', 'products.id', '=', 'product_views.productId')
+            ->select('products.*')
+            ->latest()->paginate(8);
+        // return $productView;
+        return view('Front.index', compact('featuredProducts', 'first', 'firstCat', 'weekDeals', 'categories', 'hotSeal', 'productView'));
     }
 
     public function products_by_category($id)
@@ -35,9 +46,40 @@ class FrontController extends Controller
     {
         $product = Product::findOrFail($id);
         $category = Category::where('id', $product->category)->first();
+
+        $user = Auth::user()->id;
+        if (!ProductView::where([['userId', $user], ['productId', $id]])->first()) {
+
+            $productView = ProductView::create([
+                'userId' => $user,
+                'productId' => $id,
+                'created_at' => Carbon::now(),
+            ]);
+        }
         return view('Front.products.view', compact('product', 'category'));
     }
 
+    public function super_deals()
+    {
+        $categories = Category::all();
+        $products = Product::where('oldPrice', '!=', null)->latest()->paginate(8);
+        $productView = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('product_views', 'products.id', '=', 'product_views.productId')
+            ->select('products.*')
+            ->latest()->paginate(8);
+        return view('Front.superDeals', compact('categories', 'productView', 'products'));
+    }
+
+    public function products()
+    {
+        $categories = Category::all();
+        $products = Product::latest()->paginate(8);
+        $productView = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('product_views', 'products.id', '=', 'product_views.productId')
+            ->select('products.*')
+            ->latest()->paginate(8);
+        return view('Front.productsAll', compact('categories', 'productView', 'products'));
+    }
     public function login_user(Request $request)
     {
 
@@ -135,6 +177,11 @@ class FrontController extends Controller
         }
     }
 
+    public function search_products(Request $request)
+    {
+        $products = Product::where('name', 'LIKE', '%' . $request->inputSearch . '%')->get();
+        return response()->json(['data' => $products]);
+    }
     public function user_logout()
     {
         Auth::logout();

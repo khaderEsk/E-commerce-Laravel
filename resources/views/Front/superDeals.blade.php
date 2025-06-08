@@ -13,7 +13,7 @@
             data-image-src="{{ asset('/images/shop_background.jpg') }}"></div>
         <div class="home_overlay"></div>
         <div class="home_content d-flex flex-column align-items-center justify-content-center">
-            <h2 class="home_title">{{ $selectCate->name }}</h2>
+            <h2 class="home_title">Super Deals</h2>
         </div>
     </div>
 
@@ -34,11 +34,9 @@
                                             href="{{ route('products.by.category', ['id' => $val->id]) }}">{{ $val->name }}</a>
                                     </li>
                                 @endforeach
-
                             </ul>
                         </div>
                     </div>
-
                 </div>
 
                 <div class="col-lg-9">
@@ -46,33 +44,36 @@
                     <!-- Shop Content -->
 
                     <div class="shop_content">
+                        <div class="shop_bar clearfix">
+                            <div class="shop_product_count"><span>{{ count($productView) }}</span> products found</div>
+                        </div>
 
                         <div class="product_grid">
-                            {{-- <div class="product_grid_border"></div> --}}
-                            @foreach ($products as $product)
+                            <div class="product_grid_border"></div>
+                            @foreach ($products as $val)
                                 <!-- Product Item -->
                                 <div class="product_item is_new">
                                     <div class="product_border"></div>
                                     <div class="product_image d-flex flex-column align-items-center justify-content-center">
-                                        <img src="{{ asset($product->img) }}" alt="">
+                                        <img src="{{ $val->img }}" alt="">
                                     </div>
                                     <div class="product_content">
-                                        <div class="product_price">${{ $product->newPrice }}
-                                            <span
-                                                style="color: red; text-decoration: line-through">${{ $product->oldPrice }}</span>
-                                        </div>
+                                        <div class="product_price">${{ $val->newPrice }} <span
+                                                style="color: red; text-decoration: line-through">${{ $val->oldPrice }}
+                                            </span></div>
                                         <div class="product_name">
-                                            <div><a href="{{ route('product.view', ['id' => $product->id]) }}"
-                                                    tabindex="0">{{ $product->name }}</a></div>
+                                            <div><a href="{{ route('product.view', ['id' => $val->id]) }}"
+                                                    tabindex="0">{{ $val->name }}</a></div>
                                         </div>
                                     </div>
                                     <div class="product_fav"><i class="fas fa-heart"></i></div>
                                     <ul class="product_marks">
-                                        <li class="product_mark product_discount">-25%</li>
-
+                                        <li class="product_mark product_new" style="background-color: red">
+                                            -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%</li>
                                     </ul>
                                 </div>
                             @endforeach
+
                         </div>
 
                         <!-- Shop Page Navigation -->
@@ -84,5 +85,33 @@
         </div>
     </div>
 
+    <!-- Recently Viewed -->
+    <!-- Newsletter -->
 
+    <div class="newsletter">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div
+                        class="newsletter_container d-flex flex-lg-row flex-column align-items-lg-center align-items-center justify-content-lg-start justify-content-center">
+                        <div class="newsletter_title_container">
+                            <div class="newsletter_icon"><img src="images/send.png" alt=""></div>
+                            <div class="newsletter_title">Sign up for Newsletter</div>
+                            <div class="newsletter_text">
+                                <p>...and receive %20 coupon for first shopping.</p>
+                            </div>
+                        </div>
+                        <div class="newsletter_content clearfix">
+                            <form action="#" class="newsletter_form">
+                                <input type="email" class="newsletter_input" required="required"
+                                    placeholder="Enter your email address">
+                                <button class="newsletter_button">Subscribe</button>
+                            </form>
+                            <div class="newsletter_unsubscribe_link"><a href="#">unsubscribe</a></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection

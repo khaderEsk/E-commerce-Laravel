@@ -7,12 +7,11 @@
             <div class="row">
                 <div class="col d-flex flex-row">
                     <div class="top_bar_contact_item">
-                        <div class="top_bar_icon"><img src="images/phone.png" alt=""></div>+38 068 005
-                        3570
+                        <div class="top_bar_icon"><img src="images/phone.png" alt=""></div>+963 930 668 517
                     </div>
                     <div class="top_bar_contact_item">
                         <div class="top_bar_icon"><img src="images/mail.png" alt=""></div><a
-                            href="mailto:fastsales@gmail.com">fastsales@gmail.com</a>
+                            href="mailto:khader9es@gmail.com">khader9es@gmail.com</a>
                     </div>
                     <div class="top_bar_content ml-auto">
                         <div class="top_bar_menu">
@@ -61,7 +60,7 @@
                 <!-- Logo -->
                 <div class="col-lg-2 col-sm-3 col-3 order-1">
                     <div class="logo_container">
-                        <div class="logo"><a href="#">OneTech</a></div>
+                        <div class="logo"><a href="{{ route('home') }}">OneTech</a></div>
                     </div>
                 </div>
 
@@ -70,23 +69,12 @@
                     <div class="header_search">
                         <div class="header_search_content">
                             <div class="header_search_form_container">
-                                <form action="#" class="header_search_form clearfix">
+                                <form class="header_search_form clearfix">
                                     <input type="search" required="required" class="header_search_input"
                                         placeholder="Search for products...">
-                                    <div class="custom_dropdown">
-                                        <div class="custom_dropdown_list">
-                                            <span class="custom_dropdown_placeholder clc">All Categories</span>
-                                            <i class="fas fa-chevron-down"></i>
-                                            <ul class="custom_list clc">
-                                                <li><a class="clc" href="#">All Categories</a></li>
-                                                @foreach ($categories as $category)
-                                                    <li><a class="clc" href="#">{{ $category->name }}</a></li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="header_search_button trans_300" value="Submit"><img
-                                            src="images/search.png" alt=""></button>
+                                    <button type="submit" id="search" class="header_search_button trans_300"
+                                        value="Submit"><img src="{{ asset('/images/search.png') }}"
+                                            alt=""></button>
                                 </form>
                             </div>
                         </div>
@@ -154,66 +142,13 @@
                             <ul class="standard_dropdown main_nav_dropdown">
                                 <li><a href="{{ route('home') }}">Home<i class="fas fa-chevron-down"></i></a></li>
                                 <li class="hassubs">
-                                    <a href="#">Super Deals<i class="fas fa-chevron-down"></i></a>
-                                    <ul>
-                                        <li>
-                                            <a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                            <ul>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                    </ul>
+                                    <a href="{{ route('super.deals') }}">Super Deals</a>
                                 </li>
                                 <li class="hassubs">
-                                    <a href="#">Featured Brands<i class="fas fa-chevron-down"></i></a>
-                                    <ul>
-                                        <li>
-                                            <a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                            <ul>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                                <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="#">Menu Item<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                    </ul>
+                                    <a href="{{ route('products') }}">Products</a>
+
                                 </li>
-                                <li class="hassubs">
-                                    <a href="#">Pages<i class="fas fa-chevron-down"></i></a>
-                                    <ul>
-                                        <li><a href="shop.html">Shop<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="product.html">Product<i class="fas fa-chevron-down"></i></a></li>
-                                        <li><a href="blog.html">Blog<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="{{ route('login') }}">Blog Post<i
-                                                    class="fas fa-chevron-down"></i></a></li>
-                                        <li><a href="regular.html">Regular Post<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="cart.html">Cart<i class="fas fa-chevron-down"></i></a>
-                                        </li>
-                                        <li><a href="contact.html">Contact<i class="fas fa-chevron-down"></i></a></li>
-                                    </ul>
-                                </li>
+
                                 <li><a href="blog.html">Blog<i class="fas fa-chevron-down"></i></a></li>
                                 <li><a href="contact.html">Contact<i class="fas fa-chevron-down"></i></a></li>
                             </ul>
@@ -337,3 +272,46 @@
     </div>
 
 </header>
+
+
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('#search').click(function(e) {
+                e.preventDefault();
+
+                let inputSearch = $('.header_search_input').val();
+                console.log("goood");
+
+                if (inputSearch != '') {
+                    $.ajax({
+                        method: 'post',
+                        // url: '{{ route('login') }}',
+                        url: "/search-products",
+                        data: {
+                            inputSearch: inputSearch
+                        },
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            if (response.data == 0) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Not Fount Products',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok!'
+                                })
+                            } else {
+                                window.location.href = '/search-view/' + inputSearch +
+
+                            }
+
+                        }
+                    })
+                }
+            });
+        });
+    </script>
+@endsection

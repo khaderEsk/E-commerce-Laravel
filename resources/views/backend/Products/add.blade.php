@@ -115,13 +115,6 @@
                         confirmButtonText: 'Ok!'
                     })
 
-                } else if (oldPrice == '') {
-                    Swal.fire({
-                        title: 'Error!',
-                        text: 'Please Enter old price product',
-                        icon: 'error',
-                        confirmButtonText: 'Ok!'
-                    })
                 } else if (newPrice == '') {
                     Swal.fire({
                         title: 'Error!',

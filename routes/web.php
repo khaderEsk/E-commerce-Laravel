@@ -17,10 +17,14 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/user/forget-password', 'forget_password')->name('forget.password');
     Route::post('/user/reset-password', 'reset_password')->name('reset.password');
     Route::get('/user/update-password/{id}', 'update_password')->name('update.password');
+    Route::get('/super-deals', 'super_deals')->name('super.deals');
+    Route::get('/products-all', 'products')->name('products');
 
     Route::get('/products-by-category/{id}', 'products_by_category')->name('products.by.category');
     Route::get('/product-view/{id}', 'product_view')->name('product.view');
 
+    Route::post('/search-products', 'search_products');
+    
     Route::get('/error-404', 'error_404')->name('error.404');
     Route::get('/error.403', 'error_403')->name('error.403');
 
