@@ -233,7 +233,9 @@
                                                 <div class="product_fav"><i class="fas fa-heart"></i></div>
                                                 <ul class="product_marks">
                                                     <li class="product_mark product_discount">
-                                                        -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
+                                                        @if ($val->oldPrice != 0)
+                                                            -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
+                                                        @endif
                                                     </li>
                                                     <li class="product_mark product_new">new</li>
                                                 </ul>
@@ -529,7 +531,10 @@
                                         </div>
                                         <ul class="product_marks">
                                             <li class="product_mark product_discount">
-                                                -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
+                                                @if ($val->oldPrice != 0)
+                                                    -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
+                                                @endif
+
                                             </li>
                                             <li class="product_mark product_new">new</li>
                                         </ul>
@@ -926,70 +931,75 @@
             </div>
         </div>
     </div>
-
-    <!-- Recently Viewed -->
-    @if (count($productView) > 0)
-        <div class="viewed">
-            <div class="container">
-                <div class="row">
-                    <div class="col">
-                        <div class="viewed_title_container">
-                            <h3 class="viewed_title">Recently Viewed</h3>
-                            <div class="viewed_nav_container">
-                                <div class="viewed_nav viewed_prev"><i class="fas fa-chevron-left"></i></div>
-                                <div class="viewed_nav viewed_next"><i class="fas fa-chevron-right"></i></div>
-                            </div>
-                        </div>
-
-                        <div class="viewed_slider_container">
-
-                            <!-- Recently Viewed Slider -->
-
-                            <div class="product_panel panel active">
-                                <div class="featured_slider slider">
-                                    @foreach ($productView as $val)
-                                        <!-- Slider Item -->
-                                        <div class="featured_slider_item">
-                                            <div class="border_active"></div>
-                                            <div
-                                                class="product_item discount d-flex flex-column align-items-center justify-content-center text-center">
-                                                <div
-                                                    class="product_image d-flex flex-column align-items-center justify-content-center">
-                                                    <img src="{{ asset($val->img) }}" alt="" width="100"
-                                                        height="100">
-                                                </div>
-                                                <div class="product_content mb-10">
-                                                    <div class="product_price discount">
-                                                        ${{ $val->newPrice }}<span
-                                                            style="text-decoration: line-through">${{ $val->oldPrice }}</span>
-                                                    </div>
-                                                    <div class="product_name">
-                                                        <div><a
-                                                                href="{{ route('product.view', ['id' => $val->id]) }}">{{ $val->name }}</a>
-                                                        </div>
-                                                    </div>
-                                                    <div class="product_extras">
-                                                        <button class="product_cart_button">Add to Cart</button>
-                                                    </div>
-                                                </div>
-                                                <div class="product_fav"><i class="fas fa-heart"></i></div>
-                                                <ul class="product_marks">
-                                                    <li class="product_mark product_discount">
-                                                        -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
-                                                    </li>
-                                                    <li class="product_mark product_new">new</li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                    @endforeach
+    @if (Auth::check())
+        <!-- Recently Viewed -->
+        @if (count($productView) > 0)
+            <div class="viewed">
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div class="viewed_title_container">
+                                <h3 class="viewed_title">Recently Viewed</h3>
+                                <div class="viewed_nav_container">
+                                    <div class="viewed_nav viewed_prev"><i class="fas fa-chevron-left"></i></div>
+                                    <div class="viewed_nav viewed_next"><i class="fas fa-chevron-right"></i></div>
                                 </div>
-                                <div class="featured_slider_dots_cover"></div>
+                            </div>
+
+                            <div class="viewed_slider_container">
+
+                                <!-- Recently Viewed Slider -->
+
+                                <div class="product_panel panel active">
+                                    <div class="featured_slider slider">
+                                        @if (Auth::check())
+                                            @foreach ($productView as $val)
+                                                <!-- Slider Item -->
+                                                <div class="featured_slider_item">
+                                                    <div class="border_active"></div>
+                                                    <div
+                                                        class="product_item discount d-flex flex-column align-items-center justify-content-center text-center">
+                                                        <div
+                                                            class="product_image d-flex flex-column align-items-center justify-content-center">
+                                                            <img src="{{ asset($val->img) }}" alt=""
+                                                                width="100" height="100">
+                                                        </div>
+                                                        <div class="product_content mb-10">
+                                                            <div class="product_price discount">
+                                                                ${{ $val->newPrice }}<span
+                                                                    style="text-decoration: line-through">${{ $val->oldPrice }}</span>
+                                                            </div>
+                                                            <div class="product_name">
+                                                                <div><a
+                                                                        href="{{ route('product.view', ['id' => $val->id]) }}">{{ $val->name }}</a>
+                                                                </div>
+                                                            </div>
+                                                            <div class="product_extras">
+                                                                <button class="product_cart_button">Add to Cart</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                                        <ul class="product_marks">
+                                                            <li class="product_mark product_discount">
+                                                                @if ($val->oldPrice != 0)
+                                                                    -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%
+                                                                @endif
+                                                            </li>
+                                                            <li class="product_mark product_new">new</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                            @endforeach
+                                        @endif
+                                    </div>
+                                    <div class="featured_slider_dots_cover"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     @endif
     <!-- Brands -->
 

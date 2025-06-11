@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Mail\ForgetPassword;
+use App\Models\Cart;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductView;
@@ -27,10 +28,13 @@ class FrontController extends Controller
         $weekDeals = Product::latest()->paginate(3);
         $categories = Category::all();
         $hotSeal = Product::where('oldPrice', "!=", null)->get();
-        $productView = DB::table('products')->where('userId', Auth::user()->id)
-            ->join('product_views', 'products.id', '=', 'product_views.productId')
-            ->select('products.*')
-            ->latest()->paginate(8);
+        $productView = null;
+        if (Auth::check()) {
+            $productView = DB::table('products')->where('userId', Auth::user()->id)
+                ->join('product_views', 'products.id', '=', 'product_views.productId')
+                ->select('products.*')
+                ->latest()->paginate(8);
+        }
         // return $productView;
         return view('Front.index', compact('featuredProducts', 'first', 'firstCat', 'weekDeals', 'categories', 'hotSeal', 'productView'));
     }
@@ -182,6 +186,32 @@ class FrontController extends Controller
         $products = Product::where('name', 'LIKE', '%' . $request->inputSearch . '%')->get();
         return response()->json(['data' => $products]);
     }
+    public function search_view(Request $request)
+    {
+        $products = Product::where('name', 'LIKE', '%' . $request->inputSearch . '%')->latest()->paginate(10);
+        $categories = Category::all();
+        $productView = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('product_views', 'products.id', '=', 'product_views.productId')
+            ->select('products.*')
+            ->latest()->paginate(8);
+        return view('Front.result', compact('categories', 'productView', 'products'));
+    }
+
+    public function add_cart(Request $request)
+    {
+            // return response()->json(['data' => $request]);
+        if (Auth::check()) {
+            Cart::create([
+                'userId' => Auth::user()->id,
+                'productId' => $request->productId,
+                'quantity' => $request->quantity
+            ]);
+            return response()->json(['data' => 1]);
+        } else {
+            return response()->json(['data' => 0]);
+        }
+    }
+
     public function user_logout()
     {
         Auth::logout();

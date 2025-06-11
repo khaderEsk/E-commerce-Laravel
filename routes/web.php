@@ -24,12 +24,16 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/product-view/{id}', 'product_view')->name('product.view');
 
     Route::post('/search-products', 'search_products');
-    
+    Route::post('/search-view/{products}', 'search_view');
+
+
     Route::get('/error-404', 'error_404')->name('error.404');
     Route::get('/error.403', 'error_403')->name('error.403');
-
+    
+    Route::post('/add-cart', 'add_cart')->name('add.cart');
     Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/user-logout', 'user_logout')->name('user.logout');
+
     });
 });
 

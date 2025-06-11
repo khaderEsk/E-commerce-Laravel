@@ -50,7 +50,8 @@
                                 <div class="product_price">${{ $product->oldPrice }}</div>
                                 <span style="color: red; text-decoration: line-through">${{ $product->newPrice }}</span>
                                 <div class="button_container">
-                                    <button type="button" class="button cart_button">Add to Cart</button>
+                                    <button type="button" class="button cart_button" productID={{ $product->id }}>Add to
+                                        Cart</button>
                                     <div class="product_fav"><i class="fas fa-heart"></i></div>
                                 </div>
 
@@ -62,4 +63,64 @@
             </div>
         </div>
     </div>
+@endsection
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.cart_button').click(function(e) {
+                let productId = $(this).attr('productID');
+                let quantity = $('#quantity_input').val();
+                let formData = new FormData();
+                formData.append('quantity', quantity);
+                formData.append('productId', productId);
+                if (quantity == '' || quantity == 0) {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Please input quantity Product',
+                        icon: 'error',
+                        confirmButtonText: 'Ok!'
+                    })
+                } else {
+                    $.ajax({
+                        method: 'post',
+                        // url: '{{ route('login') }}',
+                        url: "/add-cart",
+                        contentType: false,
+                        processData: false,
+                        data: formData,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        success: function(response) {
+                            console.log(response);
+
+                            if (response.data == 0) {
+                                Swal.fire({
+                                    title: 'Error!',
+                                    text: 'Category Already Exists',
+                                    icon: 'error',
+                                    confirmButtonText: 'Ok!'
+                                })
+                            } else {
+                                Swal.fire({
+                                    title: 'Success!',
+                                    text: 'Product Added Cart Successfully',
+                                    icon: 'success',
+                                    confirmButtonText: 'Ok!'
+                                }).then(result => {
+                                    if (result.isConfirmed) {
+                                        window.location.reload();
+                                    }
+                                });
+                            }
+
+                        }
+                    })
+
+                }
+            });
+        });
+    </script>
+
 @endsection
