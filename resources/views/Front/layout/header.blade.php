@@ -84,12 +84,16 @@
 
                 <!-- Wishlist -->
                 <div class="col-lg-4 col-9 order-lg-3 order-2 text-lg-left text-right">
+                    @php(
+    $favorite = DB::table('favorites')->where('userId', Auth::user()->id)->count('id'))
                     <div class="wishlist_cart d-flex flex-row align-items-center justify-content-end">
                         <div class="wishlist d-flex flex-row align-items-center justify-content-end">
                             <div class="wishlist_icon"><img src={{ asset('/images/heart.png') }} alt=""></div>
                             <div class="wishlist_content">
                                 <div class="wishlist_text"><a href="#">Wishlist</a></div>
-                                <div class="wishlist_count">115</div>
+                                <div class="wishlist_count">
+                                    {{ $favorite }}
+                                </div>
                             </div>
                         </div>
 
@@ -97,12 +101,15 @@
                         <div class="cart">
                             <div class="cart_container d-flex flex-row align-items-center justify-content-end">
                                 <div class="cart_icon">
+                                    @php(
+    $cart = DB::table('carts')->where('userId', Auth::user()->id)->count('id')
+)
                                     <img src={{ asset('/images/cart.png') }} alt="">
-                                    <div class="cart_count"><span>10</span></div>
+                                    <div class="cart_count"><span>{{ $cart }}</span></div>
                                 </div>
                                 <div class="cart_content">
-                                    <div class="cart_text"><a href="#">Cart</a></div>
-                                    <div class="cart_price">$85</div>
+                                    <div class="cart_text"><a href="{{ route('view.cart') }}">Cart</a></div>
+                                    <div class="cart_price"></div>
                                 </div>
                             </div>
                         </div>

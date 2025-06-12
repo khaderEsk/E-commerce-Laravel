@@ -1,38 +1,5 @@
 @extends('Front.master')
 
-@section('css')
-    <style>
-        .product_new {
-            display: none;
-            background: #0e8ce4;
-            visibility: hidden;
-            opacity: 0;
-        }
-
-        .product_marks {
-            display: block;
-            position: absolute;
-            top: 33px;
-            left: 24px;
-            -webkit-transition: all 200ms ease;
-            -moz-transition: all 200ms ease;
-            -ms-transition: all 200ms ease;
-            -o-transition: all 200ms ease;
-            transition: all 200ms ease;
-        }
-
-        .product_mark {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            color: #FFFFFF;
-            text-align: center;
-            line-height: 36px;
-            font-size: 12px;
-        }
-    </style>
-@endsection
 @section('content')
     <!-- Banner -->
 
@@ -230,7 +197,8 @@
                                                         <button class="product_cart_button">Add to Cart</button>
                                                     </div>
                                                 </div>
-                                                <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                                <div class="product_fav" productId={{ $val->id }}><i
+                                                        class="fas fa-heart"></i></div>
                                                 <ul class="product_marks">
                                                     <li class="product_mark product_discount">
                                                         @if ($val->oldPrice != 0)
@@ -271,7 +239,8 @@
                                                         <button class="product_cart_button">Add to Cart</button>
                                                     </div>
                                                 </div>
-                                                <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                                <div class="product_fav" productId={{ $val->id }}><i
+                                                        class="fas fa-heart"></i></div>
 
                                             </div>
                                         </div>
@@ -435,7 +404,8 @@
                                                             <button class="product_cart_button">Add to Cart</button>
                                                         </div>
                                                     </div>
-                                                    <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                                    <div class="product_fav" productId={{ $val->id }}><i
+                                                            class="fas fa-heart"></i></div>
                                                     <ul class="product_marks">
                                                         <li class="product_mark product_discount"></li>
                                                         <li class="product_mark product_new">new</li>
@@ -508,7 +478,7 @@
                             <div class="bestsellers_slider slider">
                                 @foreach ($hotSeal as $val)
                                     <!-- Best Sellers Item -->
-                                    @php($category = DB::table('categories')->where('id', $val->category)->first()))
+                                    @php($category = DB::table('categories')->where('id', $val->category)->first())
                                     <div class="bestsellers_item">
                                         <div
                                             class="bestsellers_item_container d-flex flex-row align-items-center justify-content-start">
@@ -538,7 +508,8 @@
                                             </li>
                                             <li class="product_mark product_new">new</li>
                                         </ul>
-                                        <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                        <div class="product_fav" productId={{ $val->id }}><i
+                                                class="fas fa-heart"></i></div>
                                     </div>
                                 @endforeach
                             </div>
@@ -978,7 +949,8 @@
                                                                 <button class="product_cart_button">Add to Cart</button>
                                                             </div>
                                                         </div>
-                                                        <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                                        <div class="product_fav" productId={{ $val->id }}><i
+                                                                class="fas fa-heart"></i></div>
                                                         <ul class="product_marks">
                                                             <li class="product_mark product_discount">
                                                                 @if ($val->oldPrice != 0)
@@ -1087,3 +1059,43 @@
         </div>
     </div>
 @endsection
+
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.product_fav').click(function(e) {
+                let id = $(this).attr('productId');
+                Swal.fire({
+                    title: 'warning!',
+                    text: 'Do want delete this order',
+                    icon: 'warning',
+                    confirmButtonText: 'yes!'
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            method: 'post',
+                            // url: '{{ route('login') }}',
+                            url: "/cart-delete",
+                            data: {
+                                id: id
+
+                            },
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            success: function(response) {
+                                console.log(response.data);
+
+                                // if (response.data == 1) {
+                                //     window.location.reload();
+                                // }
+
+                            }
+                        })
+                    }
+                })
+            });
+        });
+    </script>
+@endSection

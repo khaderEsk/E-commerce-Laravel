@@ -28,12 +28,16 @@ Route::controller(FrontController::class)->group(function () {
 
 
     Route::get('/error-404', 'error_404')->name('error.404');
-    Route::get('/error.403', 'error_403')->name('error.403');
-    
+    Route::get('/error-403', 'error_403')->name('error.403');
+
     Route::post('/add-cart', 'add_cart')->name('add.cart');
+    Route::get('/view-cart', 'view_cart')->name('view.cart');
+    Route::post('/cart-delete', 'cart_delete')->name('cart.delete');
+    Route::get('/empty-cart', 'empty_cart');
+
+
     Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/user-logout', 'user_logout')->name('user.logout');
-
     });
 });
 

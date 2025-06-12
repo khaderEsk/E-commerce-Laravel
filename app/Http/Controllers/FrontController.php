@@ -23,9 +23,11 @@ class FrontController extends Controller
     public function home()
     {
         $featuredProducts = Product::where('isFeatured', 1)->get();
+        
         $first = Product::first();
         $firstCat = Category::where('id', $first->category)->first();
         $weekDeals = Product::latest()->paginate(3);
+        // return $weekDeals;
         $categories = Category::all();
         $hotSeal = Product::where('oldPrice', "!=", null)->get();
         $productView = null;
@@ -50,10 +52,8 @@ class FrontController extends Controller
     {
         $product = Product::findOrFail($id);
         $category = Category::where('id', $product->category)->first();
-
         $user = Auth::user()->id;
         if (!ProductView::where([['userId', $user], ['productId', $id]])->first()) {
-
             $productView = ProductView::create([
                 'userId' => $user,
                 'productId' => $id,
@@ -170,10 +170,8 @@ class FrontController extends Controller
     {
         if (Auth::check()) {
             if (Auth::user()->hasRole('admin')) {
-
                 return redirect()->route('dashboard');
             } else if (Auth::user()->hasRole('user')) {
-
                 return redirect()->route('home');
             }
         } else {
@@ -186,6 +184,7 @@ class FrontController extends Controller
         $products = Product::where('name', 'LIKE', '%' . $request->inputSearch . '%')->get();
         return response()->json(['data' => $products]);
     }
+
     public function search_view(Request $request)
     {
         $products = Product::where('name', 'LIKE', '%' . $request->inputSearch . '%')->latest()->paginate(10);
@@ -199,7 +198,6 @@ class FrontController extends Controller
 
     public function add_cart(Request $request)
     {
-            // return response()->json(['data' => $request]);
         if (Auth::check()) {
             Cart::create([
                 'userId' => Auth::user()->id,
@@ -210,6 +208,33 @@ class FrontController extends Controller
         } else {
             return response()->json(['data' => 0]);
         }
+    }
+
+    public function view_cart()
+    {
+        $data = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('carts', 'products.id', '=', 'carts.productId')
+            ->select(['carts.*', 'products.*'])
+            ->get();
+        $totalPrice = DB::table('carts')
+            ->where('userId', Auth::user()->id)
+            ->join('products', 'carts.productId', '=', 'products.id')
+            ->sum(DB::raw('carts.quantity * products.newPrice'));
+        return view('Front.cart', compact('data', 'totalPrice'));
+    }
+
+    public function cart_delete($id)
+    {
+        $cart = Cart::findOrFail($id);
+        return response()->json(['data' => $cart]);
+    }
+
+    public function empty_cart()
+    {
+        $carts = Cart::where('userId', Auth::user()->id)->delete();
+        return response()->json([
+            'data' => 1
+        ]);
     }
 
     public function user_logout()
