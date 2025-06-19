@@ -66,7 +66,8 @@
                                                     tabindex="0">{{ $val->name }}</a></div>
                                         </div>
                                     </div>
-                                    <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                    <div class="product_fav" productId={{ $val->id }}><i class="fas fa-heart"></i>
+                                    </div>
                                     <ul class="product_marks">
                                         <li class="product_mark product_new" style="background-color: red">
                                             -{{ round((($val->oldPrice - $val->newPrice) / $val->oldPrice) * 100) }}%</li>
@@ -115,3 +116,34 @@
         </div>
     </div>
 @endsection
+
+
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.product_fav').click(function(e) {
+                let productId = $(this).attr('productId');
+                $.ajax({
+                    method: 'post',
+                    // url: '{{ route('login') }}',
+                    url: "/add-favorite",
+                    data: {
+                        productId: productId
+
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.data == 1) {
+
+                            window.location.reload();
+                        }
+
+                    }
+                })
+            })
+        });
+    </script>
+@endSection

@@ -66,7 +66,7 @@
                                                     tabindex="0">{{ $product->name }}</a></div>
                                         </div>
                                     </div>
-                                    <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                    <div class="product_fav"  productId={{ $product->id }}><i class="fas fa-heart"></i></div>
                                     <ul class="product_marks">
                                         <li class="product_mark product_discount">-25%</li>
 
@@ -86,3 +86,35 @@
 
 
 @endsection
+
+
+
+
+@section('js')
+    <script>
+        $(document).ready(function() {
+            $('.product_fav').click(function(e) {
+                let productId = $(this).attr('productId');
+                $.ajax({
+                    method: 'post',
+                    // url: '{{ route('login') }}',
+                    url: "/add-favorite",
+                    data: {
+                        productId: productId
+
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.data == 1) {
+                            
+                            window.location.reload();
+                        }
+
+                    }
+                })
+            })
+        });
+    </script>
+@endSection

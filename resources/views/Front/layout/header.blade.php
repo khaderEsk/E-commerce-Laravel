@@ -38,8 +38,15 @@
                         <div class="top_bar_user">
                             <div class="user_icon"><img src={{ asset('/images/user.svg') }} alt=""></div>
                             @if (Auth::check())
-                                <div><a href="{{ route('home') }}">{{ Auth::user()->name }}</a></div>
-                                <div><a href="{{ route('user.logout') }}">Sign Out</a></div>
+                                @role('user')
+                                    <div><a href="{{ route('home') }}">{{ Auth::user()->name }}</a></div>
+                                    <div><a href="{{ route('user.logout') }}">Sign Out</a></div>
+                                @endrole
+                                
+                                @role('admin')
+                                    <div><a href="{{ route('dashboard') }}">Dashboard</a></div>
+                                    <div><a href="{{ route('admin.logout') }}">Sign Out</a></div>
+                                @endrole
                             @else
                                 <div><a href="{{ route('register') }}">Register</a></div>
                                 <div><a href="{{ route('login') }}">Sign in</a></div>
@@ -85,12 +92,13 @@
                 <!-- Wishlist -->
                 <div class="col-lg-4 col-9 order-lg-3 order-2 text-lg-left text-right">
                     @php(
-    $favorite = DB::table('favorites')->where('userId', Auth::user()->id)->count('id'))
+    $favorite = DB::table('favorites')->where('userId', Auth::user()->id)->count('id')
+)
                     <div class="wishlist_cart d-flex flex-row align-items-center justify-content-end">
                         <div class="wishlist d-flex flex-row align-items-center justify-content-end">
                             <div class="wishlist_icon"><img src={{ asset('/images/heart.png') }} alt=""></div>
                             <div class="wishlist_content">
-                                <div class="wishlist_text"><a href="#">Wishlist</a></div>
+                                <div class="wishlist_text"><a href="{{ route('view.favorite') }}">Wishlist</a></div>
                                 <div class="wishlist_count">
                                     {{ $favorite }}
                                 </div>

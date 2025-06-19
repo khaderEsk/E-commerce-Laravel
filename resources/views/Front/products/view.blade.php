@@ -52,7 +52,7 @@
                                 <div class="button_container">
                                     <button type="button" class="button cart_button" productID={{ $product->id }}>Add to
                                         Cart</button>
-                                    <div class="product_fav"><i class="fas fa-heart"></i></div>
+                                    <div class="product_fav"  productId={{ $product->id }}><i class="fas fa-heart"></i></div>
                                 </div>
 
                             </form>
@@ -120,6 +120,31 @@
 
                 }
             });
+
+            
+            $('.product_fav').click(function(e) {
+                let productId = $(this).attr('productId');
+                $.ajax({
+                    method: 'post',
+                    // url: '{{ route('login') }}',
+                    url: "/add-favorite",
+                    data: {
+                        productId: productId
+
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.data == 1) {
+                            
+                            window.location.reload();
+                        }
+
+                    }
+                })
+            })
+
         });
     </script>
 

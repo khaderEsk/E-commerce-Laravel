@@ -280,6 +280,6 @@ class BackendController extends Controller
     {
         Auth::logout();
         Session::flush();
-        return redirect()->route('home');
+        return redirect()->route('login');
     }
 }

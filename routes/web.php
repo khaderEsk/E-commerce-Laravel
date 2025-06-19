@@ -34,7 +34,14 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/view-cart', 'view_cart')->name('view.cart');
     Route::post('/cart-delete', 'cart_delete')->name('cart.delete');
     Route::get('/empty-cart', 'empty_cart');
+    Route::post('/add-wishlist', 'add_order_wishlist')->name('add.order.wishlist');
 
+
+    Route::post('/add-favorite', 'add_favorite')->name('add.favorite');
+    Route::get('/view-favorite', 'view_favorite')->name('view.favorite');
+    Route::post('/add-favorite-cart', 'add_favorite_cart');
+    Route::delete('/favorite-delete/{id}', 'favorite_delete')->name('favorite.delete');
+    Route::get('/empty-wishlist', 'empty_wishlist');
 
     Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/user-logout', 'user_logout')->name('user.logout');

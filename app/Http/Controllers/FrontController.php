@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\ForgetPassword;
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\Favorite;
 use App\Models\Product;
 use App\Models\ProductView;
 use App\Models\User;
@@ -20,14 +21,13 @@ use function Pest\Laravel\json;
 
 class FrontController extends Controller
 {
+
     public function home()
     {
         $featuredProducts = Product::where('isFeatured', 1)->get();
-        
         $first = Product::first();
         $firstCat = Category::where('id', $first->category)->first();
         $weekDeals = Product::latest()->paginate(3);
-        // return $weekDeals;
         $categories = Category::all();
         $hotSeal = Product::where('oldPrice', "!=", null)->get();
         $productView = null;
@@ -37,7 +37,6 @@ class FrontController extends Controller
                 ->select('products.*')
                 ->latest()->paginate(8);
         }
-        // return $productView;
         return view('Front.index', compact('featuredProducts', 'first', 'firstCat', 'weekDeals', 'categories', 'hotSeal', 'productView'));
     }
 
@@ -48,6 +47,7 @@ class FrontController extends Controller
         $selectCate = Category::findOrFail($id);
         return view('Front.products_by_category', compact('products', 'categories', 'selectCate'));
     }
+
     public function product_view($id)
     {
         $product = Product::findOrFail($id);
@@ -84,9 +84,9 @@ class FrontController extends Controller
             ->latest()->paginate(8);
         return view('Front.productsAll', compact('categories', 'productView', 'products'));
     }
+
     public function login_user(Request $request)
     {
-
         if (Auth::guard('web')->attempt(['email' => $request->email, 'password' => $request->password])) {
             if (Auth::user()->hasRole('admin')) {
                 return response()->json(['data' => 1]);
@@ -123,7 +123,6 @@ class FrontController extends Controller
             $user = User::where('email', $request->email)->first();
             if ($user) {
                 Mail::to($user->email)->send(new  ForgetPassword(route('update.password', ['id' => $user->id])));
-
                 return response()->json(['data' => 1]);
             } else {
                 return response()->json(['data' => 0]);
@@ -132,7 +131,6 @@ class FrontController extends Controller
             return redirect()->route('home');
         }
     }
-
 
     public function update_password($id)
     {
@@ -143,7 +141,7 @@ class FrontController extends Controller
     public function updated_password(Request $request)
     {
         if ($request->isMethod('post')) {
-            $user = User::where('id', $request->userId)->update([
+            User::where('id', $request->userId)->update([
                 'password' => Hash::make($request->password)
             ]);
             return response()->json(['data' => 1]);
@@ -151,14 +149,13 @@ class FrontController extends Controller
             return redirect()->route('home');
         }
     }
+
     public function error_403()
     {
         if (Auth::check()) {
             if (Auth::user()->hasRole('admin')) {
-
                 return redirect()->route('dashboard');
             } else if (Auth::user()->hasRole('user')) {
-
                 return redirect()->route('home');
             }
         } else {
@@ -231,12 +228,113 @@ class FrontController extends Controller
 
     public function empty_cart()
     {
-        $carts = Cart::where('userId', Auth::user()->id)->delete();
+        Cart::where('userId', Auth::user()->id)->delete();
         return response()->json([
             'data' => 1
         ]);
     }
 
+    public function add_favorite(Request $request)
+    {
+        if (Auth::check()) {
+            $fav =  Favorite::where([
+                ['userId', Auth::user()->id],
+                ['productId', $request->productId]
+            ])->first();
+            if (!$fav) {
+                Favorite::create([
+                    'userId' => Auth::user()->id,
+                    'productId' => $request->productId,
+                ]);
+                return response()->json(['data' => 1]);
+            }
+        } else {
+            return response()->json(['data' => 0]);
+        }
+    }
+
+    public function view_favorite()
+    {
+        $data = DB::table('products')->where('userId', Auth::user()->id)
+            ->join('favorites', 'products.id', '=', 'favorites.productId')
+            ->select(['favorites.*', 'products.*'])
+            ->get();
+        return view('Front.favorite', compact('data'));
+    }
+
+    public function add_favorite_cart(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You need to login first',
+                'reload' => false
+            ], 401);
+        }
+
+        $productExists = Cart::where([
+            ['productId', $request->id],
+            ['userId', Auth::id()]
+        ])->exists();
+
+        if ($productExists) {
+            return response()->json([
+                'success' => false,
+                'message' => 'The product is already in your cart',
+                'reload' => false
+            ]);
+        }
+
+        Cart::create([
+            'userId' => Auth::id(),
+            'productId' => $request->id,
+            'quantity' => 1
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Product added to cart successfully',
+            'reload' => true
+        ]);
+    }
+
+    public function favorite_delete($id)
+    {
+        $favorite = Favorite::where([
+            ['productId', $id],
+            ['userId', Auth::user()->id]
+        ])->first();
+        if ($favorite) {
+            $favorite->delete();
+            return response()->json(['data' => 1]);
+        }
+        return response()->json(['data' => 0]);
+    }
+
+    public function empty_wishlist()
+    {
+        Favorite::where('userId', Auth::user()->id)->delete();
+        return response()->json([
+            'data' => 1
+        ]);
+    }
+
+
+    public function add_order_wishlist(Request $request)
+    {
+        $wishlist = Favorite::where([
+            ['productId', $request->id],
+            ['userId', Auth::user()->id]
+        ])->first();
+        if ($wishlist) {
+            return response()->json(['data' => 0]);
+        }
+        Favorite::create([
+            'userId' => Auth::user()->id,
+            'productId' => $request->id
+        ]);
+        return response()->json(['data' => 1]);
+    }
     public function user_logout()
     {
         Auth::logout();

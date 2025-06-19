@@ -1017,13 +1017,10 @@
                                 <div class="brands_item d-flex flex-column justify-content-center"><img
                                         src="images/brands_8.jpg" alt=""></div>
                             </div>
-
                         </div>
-
                         <!-- Brands Slider Navigation -->
                         <div class="brands_nav brands_prev"><i class="fas fa-chevron-left"></i></div>
                         <div class="brands_nav brands_next"><i class="fas fa-chevron-right"></i></div>
-
                     </div>
                 </div>
             </div>
@@ -1065,37 +1062,27 @@
     <script>
         $(document).ready(function() {
             $('.product_fav').click(function(e) {
-                let id = $(this).attr('productId');
-                Swal.fire({
-                    title: 'warning!',
-                    text: 'Do want delete this order',
-                    icon: 'warning',
-                    confirmButtonText: 'yes!'
-                }).then(result => {
-                    if (result.isConfirmed) {
-                        $.ajax({
-                            method: 'post',
-                            // url: '{{ route('login') }}',
-                            url: "/cart-delete",
-                            data: {
-                                id: id
+                let productId = $(this).attr('productId');
+                $.ajax({
+                    method: 'post',
+                    // url: '{{ route('login') }}',
+                    url: "/add-favorite",
+                    data: {
+                        productId: productId
 
-                            },
-                            headers: {
-                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                            },
-                            success: function(response) {
-                                console.log(response.data);
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        if (response.data == 1) {
+                            
+                            window.location.reload();
+                        }
 
-                                // if (response.data == 1) {
-                                //     window.location.reload();
-                                // }
-
-                            }
-                        })
                     }
                 })
-            });
+            })
         });
     </script>
 @endSection
