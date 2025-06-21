@@ -72,13 +72,15 @@ Route::controller(BackendController::class)->group(function () {
 
         Route::get('/Featured/Products/view', 'Featured_Products_view')->name('Featured.Products.view');
         Route::get('/admin-logout', 'admin_logout')->name('admin.logout');
+        Route::get('/profile-admin', 'profile')->name('admin.profile');
+        Route::post('/update/profile', 'update_profile');
     });
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
 
 require __DIR__ . '/auth.php';

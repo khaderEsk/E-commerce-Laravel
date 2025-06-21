@@ -7,6 +7,7 @@ use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class BackendController extends Controller
@@ -15,8 +16,6 @@ class BackendController extends Controller
     {
         return view('backend.index');
     }
-
-
 
     public function category()
     {
@@ -77,27 +76,20 @@ class BackendController extends Controller
         return view('backend.categories.edit', compact('category'));
     }
 
-
     public function category_updated(Request $request)
     {
         $category = Category::where('id', $request->id)->first();
-
         if ($request->hasFile('img')) {
             if ($category->img && file_exists(public_path($category->img))) {
                 unlink(public_path($category->img));
             }
-
             $img = $request->file('img');
-
             $gen = hexdec(uniqid());
             $ex = strtolower($img->getClientOriginalExtension());
             $name = $gen . '.' . $ex;
-
             $location = 'categories/';
             $destination = public_path($location);
-
             $img->move($destination, $name);
-
             $category->img = $location . $name;
         }
 
@@ -181,25 +173,18 @@ class BackendController extends Controller
 
     public function product_updated(Request $request)
     {
-
         $product = Product::where('id', $request->id)->first();
-
         if ($request->hasFile('img')) {
             if ($product->img && file_exists(public_path($product->img))) {
                 unlink(public_path($product->img));
             }
-
             $img = $request->file('img');
-
             $gen = hexdec(uniqid());
             $ex = strtolower($img->getClientOriginalExtension());
             $name = $gen . '.' . $ex;
-
             $location = 'products/';
             $destination = public_path($location);
-
             $img->move($destination, $name);
-
             $product->img = $location . $name;
         }
 
@@ -233,30 +218,22 @@ class BackendController extends Controller
         if (!$request->hasFile('img')) {
             return response()->json(['error' => 'No image uploaded'], 400);
         }
-
         $img = $request->file('img');
-
         if (!$img->isValid()) {
             return response()->json(['error' => 'Invalid image uploaded'], 400);
         }
-
         $allowedExtensions = ['jpg', 'jpeg', 'png'];
         $ext = strtolower($img->getClientOriginalExtension());
-
         if (!in_array($ext, $allowedExtensions)) {
             return response()->json(['error' => 'Unsupported image format'], 400);
         }
-
         $gen = hexdec(uniqid());
         $imgName = $gen . '.' . $ext;
         $location = public_path('products');
-
         if (!file_exists($location)) {
             mkdir($location, 0775, true);
         }
-
         $img->move($location, $imgName);
-
         $product = Product::create([
             'category' => strip_tags($request->category),
             'name' => strip_tags($request->productName),
@@ -267,7 +244,6 @@ class BackendController extends Controller
             'isFeatured' => 1,
             'created_by' => Carbon::now(),
         ]);
-
         return response()->json(['data' => 1]);
     }
 
@@ -276,6 +252,28 @@ class BackendController extends Controller
         $products = Product::where('isFeatured', 1)->latest()->paginate(10);
         return view('backend.Featured_Products.index', compact('products'));
     }
+
+    public function profile()
+    {
+        return view('backend.profile');
+    }
+
+    public function update_profile(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
+        ]);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+        $user->save();
+        return response()->json(['data' => 1]);
+    }
+
     public function admin_logout()
     {
         Auth::logout();
