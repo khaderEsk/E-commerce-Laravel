@@ -73,7 +73,7 @@
 
                         <div class="cart_buttons">
                             <button type="button" class="button cart_button_clear emptyCart">Empty Cart</button>
-                            <button type="button" class="button cart_button_checkout">Add to Cart</button>
+                            <a href="{{route('pay.now')}}" class="button cart_button_checkout">Checkout</a>
                         </div>
                     </div>
                 </div>

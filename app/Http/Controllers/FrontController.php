@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Mail\ForgetPassword;
 use App\Models\Cart;
 use App\Models\Category;
+use App\Models\ContactUs;
 use App\Models\Favorite;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductView;
 use App\Models\User;
@@ -319,7 +321,6 @@ class FrontController extends Controller
         ]);
     }
 
-
     public function add_order_wishlist(Request $request)
     {
         $wishlist = Favorite::where([
@@ -335,6 +336,80 @@ class FrontController extends Controller
         ]);
         return response()->json(['data' => 1]);
     }
+
+    public function pay_Now()
+    {
+        $user = Auth::user()->id;
+        $cart = Cart::where('userId', $user)->get();
+        $price = [];
+        $quantity = [];
+        $pro = [];
+        foreach ($cart as $val) {
+            $product = Product::where('id', $val->productId)->first();
+            $price[] = $product->newPrice;
+            $quantity[] = $val->quantity;
+            $pro[] = $val->productId;
+        }
+        $total = array_sum($price);
+        $proQuantity = $quantity;
+        $pro = $pro;
+        $order = Order::create([
+            'userId' => $user,
+            'productId' => json_encode($pro),
+            'quantity' => json_encode($proQuantity),
+            'price' => json_encode($total),
+            'created_at' => Carbon::now()
+        ]);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://secure.telr.com/gateway/order.json');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'POST');
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Content-Type: application/json',
+            'accept: application/json',
+        ]);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, "\n{\n  \"method\": \"create\",\n  \"store\": 31741,\n  \"authkey\": \"s7LxB-bpxh@26NM7\",\n  \"framed\": 1,\n  \"order\": {\n    \"cartid\": \"$order->id\",\n    \"test\": \"1\",\n    \"amount\": \"$order->price\",\n    \"currency\": \"AED\",\n    \"description\": \"My purchase\"\n  },\n  \"return\": {\n    \"authorised\": \"http://localhost:8000/authorised/order/$order->id\",\n    \"declined\": \"http://localhost:8000/declined/order/$order->id\",\n    \"cancelled\": \"http://localhost:8000/cancelled/order/$order->id\"\n  }\n}\n");
+
+        $response = curl_exec($ch);
+
+        curl_close($ch);
+        $details = json_decode($response, true);
+        return $details;
+        $ref = $details['order']['ref'];
+        $url = $details['order']['url'];
+        $update = Order::where('id', $order->id)->update([
+            'ref' => $ref,
+        ]);
+        return redirect($url);
+    }
+
+    public function contact()
+    {
+        return view('Front.contact');
+    }
+
+    public function contact_us_submit(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+            'phone' => 'required|numeric',
+            'message' => 'required'
+        ]);
+        $contactUs = ContactUs::create([
+            'name' => strip_tags($request->name),
+            'email' => strip_tags($request->email),
+            'phone' => strip_tags($request->phone),
+            'message' => strip_tags($request->message),
+            'created_at' => Carbon::now()
+        ]);
+        if ($contactUs == true) {
+            return redirect()->back()->with('msg', 'Your Message Sent Successfully');
+        } else {
+            return redirect()->back()->with('msg', 'There is wrong plz try again');
+        }
+    }
+
     public function user_logout()
     {
         Auth::logout();

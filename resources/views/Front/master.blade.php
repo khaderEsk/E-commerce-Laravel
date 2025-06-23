@@ -91,6 +91,8 @@
     <script src="{{ asset('/plugins/parallax-js-master/parallax.min.js') }}"></script>
     <script src="{{ asset('/js/shop_custom.js') }}"></script>
     <script src="{{ asset('/js/product_custom.js') }}"></script>
+
+    <script src="{{ asset('/js/contact_custom.js') }}"></script>
     @yield('js')
 </body>
 
