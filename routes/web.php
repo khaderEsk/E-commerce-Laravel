@@ -78,6 +78,9 @@ Route::controller(BackendController::class)->group(function () {
         Route::get('/admin-logout', 'admin_logout')->name('admin.logout');
         Route::get('/profile-admin', 'profile')->name('admin.profile');
         Route::post('/update/profile', 'update_profile');
+
+        Route::get('/contact-us-all', 'contact_us_all')->name('contact.us.all');
+        Route::get('/contact-delete/{id}', 'contact_delete')->name('contact.delete');
     });
 });
 

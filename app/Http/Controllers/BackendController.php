@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\ContactUs;
 use App\Models\Product;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,7 +15,11 @@ class BackendController extends Controller
 {
     public function index()
     {
-        return view('backend.index');
+        $category = Category::count('id');
+        $product = Product::where('isFeatured', 0)->count('id');
+        $productFeatured = Product::where('isFeatured', 1)->count('id');
+        $messages = ContactUs::count('id');
+        return view('backend.index', compact('category', 'product', 'productFeatured', 'messages'));
     }
 
     public function category()
@@ -33,34 +38,25 @@ class BackendController extends Controller
         if (Category::where('name', $request->name)->first()) {
             return response()->json(['data' => 0]);
         }
-
         if (!$request->hasFile('img')) {
             return response()->json(['error' => 'No image uploaded'], 400);
         }
-
         $img = $request->file('img');
-
         if (!$img->isValid()) {
             return response()->json(['error' => 'Invalid image uploaded'], 400);
         }
-
         $allowedExtensions = ['jpg', 'jpeg', 'png'];
         $ext = strtolower($img->getClientOriginalExtension());
-
         if (!in_array($ext, $allowedExtensions)) {
             return response()->json(['error' => 'Unsupported image format'], 400);
         }
-
         $gen = hexdec(uniqid());
         $imgName = $gen . '.' . $ext;
         $location = public_path('products');
-
         if (!file_exists($location)) {
             mkdir($location, 0775, true);
         }
-
         $img->move($location, $imgName);
-
         $category = Category::create([
             'name' => $request->name,
             'order' => $request->order,
@@ -272,6 +268,19 @@ class BackendController extends Controller
         }
         $user->save();
         return response()->json(['data' => 1]);
+    }
+
+    public function contact_us_all()
+    {
+        $messages = ContactUs::get();
+        return view('backend.Contact.index', compact('messages'));
+    }
+
+    public function contact_delete($id)
+    {
+        $contact = ContactUs::findOrFail($id);
+        $contact->delete();
+        return redirect()->back()->with('msg', 'Your Message Sent Successfully');
     }
 
     public function admin_logout()
