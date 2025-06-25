@@ -46,6 +46,10 @@ Route::controller(FrontController::class)->group(function () {
     Route::get('/pay-now', 'pay_now')->name('pay.now');
     Route::get('/contact-us', 'contact')->name('contact');
     Route::post('/contact-us-submit', 'contact_us_submit')->name('contact.us.submit');
+    Route::get('/my-account', 'my_account')->name('my.account');
+
+    Route::post('/my-account-submit', 'my_account_submit')->name('my.account.submit');
+
 
     Route::middleware(['auth', 'verified', 'role:user'])->group(function () {
         Route::get('/user-logout', 'user_logout')->name('user.logout');
@@ -81,6 +85,8 @@ Route::controller(BackendController::class)->group(function () {
 
         Route::get('/contact-us-all', 'contact_us_all')->name('contact.us.all');
         Route::get('/contact-delete/{id}', 'contact_delete')->name('contact.delete');
+
+        Route::get('/users', 'users')->name('users');
     });
 });
 

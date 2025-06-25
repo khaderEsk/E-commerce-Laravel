@@ -39,7 +39,7 @@
                             <div class="user_icon"><img src={{ asset('/images/user.svg') }} alt=""></div>
                             @if (Auth::check())
                                 @role('user')
-                                    <div><a href="{{ route('home') }}">{{ Auth::user()->name }}</a></div>
+                                    <div><a href="{{ route('my.account') }}">{{ Auth::user()->name }}</a></div>
                                     <div><a href="{{ route('user.logout') }}">Sign Out</a></div>
                                 @endrole
                                 

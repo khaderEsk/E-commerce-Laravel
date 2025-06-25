@@ -410,6 +410,32 @@ class FrontController extends Controller
         }
     }
 
+    public function my_account()
+    {
+        $user = Auth::user();
+        return view('Front.profile', compact('user'));
+    }
+
+    public function my_account_submit(Request $request)
+    {
+        $user = Auth::user();
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email',
+        ]);
+        $user->name = $request->name;
+        $user->email = $request->email;
+        if ($request->password) {
+            $user->password = $request->password;
+        }
+        $user->save();
+        if ($user == true) {
+            return redirect()->back()->with('msg', 'Your info updated Successfully');
+        } else {
+            return redirect()->back()->with('msg', 'There is wrong plz try again');
+        }
+    }
+
     public function user_logout()
     {
         Auth::logout();

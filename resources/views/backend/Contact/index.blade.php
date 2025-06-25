@@ -79,4 +79,5 @@
                 <h1 style="text-align: center; color:rgba(100, 100, 223, 0.945)"> Don't have Any Massage</h1>
             @endif
         </div>
-    @endsection
+    </div>
+@endsection

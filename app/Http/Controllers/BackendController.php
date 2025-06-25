@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\ContactUs;
 use App\Models\Product;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -281,6 +282,12 @@ class BackendController extends Controller
         $contact = ContactUs::findOrFail($id);
         $contact->delete();
         return redirect()->back()->with('msg', 'Your Message Sent Successfully');
+    }
+
+    public function users()
+    {
+        $users = User::role('user')->latest()->paginate(10);
+        return view('backend.users.index', compact('users'));
     }
 
     public function admin_logout()
